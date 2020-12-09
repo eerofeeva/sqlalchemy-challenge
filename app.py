@@ -59,7 +59,6 @@ def stations():
 def tobs():
     tbs = session.query(measurement.date, measurement.tobs).\
     filter(measurement.date >= max_date-dt.timedelta(days=365)).group_by(measurement.date).all()
-
     return jsonify(tbs)
 
 
