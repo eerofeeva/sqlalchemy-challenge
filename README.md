@@ -1,3 +1,8 @@
+I found it difficult to get Flask running, and so was following examples and also what I was able to find on the WEB. Sometimes the server would simply not start for me, may be it was because I was running straight from the VS Code and not Jupyter Notebook
+
+The parent directory should contain all the files and all the commits. The notebook portion works and displays the graphs. I found a skinnier line-like bar graph more pleasing than a graph with thick bars, but it is still a bar graph.
+
+-------------------------------------------------------------------------------------
 # SQLAlchemy Homework - Surfs Up!
 
 ### Before You Begin
