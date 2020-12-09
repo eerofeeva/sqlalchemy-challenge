@@ -23,9 +23,13 @@ measurement = base.classes.measurement
 session = Session(engine)
 
 #define max_date (again) - for the query below
-
+#define list of stations to get the most active station later
 max_date=session.query(measurement.date).order_by((measurement.date).desc()).first()
 max_date = dt.datetime.strptime(max_date[0], '%Y-%m-%d')
+
+stn_list=session.query(measurement.station, func.count(measurement.station)).\
+            group_by(measurement.station).\
+            order_by(func.count(measurement.station).desc()).all()
 
 #################################################
 # Flask Setup
@@ -55,11 +59,12 @@ def stations():
     stn = session.query(station.name, station.station).all()
     return jsonify(stn)
 
+#list of temperature observations (TOBS) for the previous year for most active station
 @app.route("/api/v1.0/tobs")
 def tobs():
-    tbs = session.query(measurement.date, measurement.tobs).\
-    filter(measurement.date >= max_date-dt.timedelta(days=365)).group_by(measurement.date).all()
-
+    tbs = session.query(measurement.tobs).\
+    filter(measurement.date >= max_date-dt.timedelta(days=365)).\
+        filter(measurement.station==stn_list[0][0]).all()
     return jsonify(tbs)
 
 
@@ -69,6 +74,7 @@ def start_date(start):
     filter(measurement.date >= start).all()
     return jsonify(temp_from_date)
 
+#interpreting date between start and end as inclusive (greater or equal/less or equal)
 @app.route("/api/v1.0/<start>/<end>")
 def start_end_date(start, end):
     temp_from_to_date = session.query(func.min(measurement.tobs), func.max(measurement.tobs,  func.avg(measurement.tobs))).\
